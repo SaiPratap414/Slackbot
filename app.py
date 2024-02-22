@@ -12,6 +12,7 @@ from flask import Flask, request
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
+from functions import draft_email, generate_project_description, get_anime_waifu_image
 
 # Load environment variables from .env file
 load_dotenv()
@@ -111,7 +112,11 @@ def slack_events():
         return request.json["challenge"]
     else:
         return handler.handle(request)
+    
+@flask_app.route('/')
+def home():
+    return 'Welcome to my Flask Slack App!'
 
 # Run the Flask app
 if __name__ == "__main__":
-    flask_app.run()
+    flask_app.run(debug=True)
