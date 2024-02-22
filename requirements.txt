@@ -1,6 +1,7 @@
 python-dotenv
 langchain
 openai
-slack-sdk 
-slack-bolt 
+slack-sdk
+slack-bolt
 flask
+pydrive
