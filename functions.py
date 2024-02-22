@@ -108,10 +108,12 @@ def generate_project_description(user_input):
 
     return response
 
+
+
+
 def get_anime_waifu_image():
     try:
-        # Simulated API call - replace with actual API URL and handle the response
-        api_url = "https://api.example.com/get_waifu_image"  # Placeholder URL
+        api_url = "https://api.waifu.pics/sfw/waifu"  # API endpoint for fetching a random anime waifu image
         response = requests.get(api_url)
         if response.status_code == 200:
             data = response.json()
@@ -122,4 +124,3 @@ def get_anime_waifu_image():
     except Exception as e:
         print(f"Error fetching anime waifu image: {e}")
         return "An error occurred while fetching the image."
-
