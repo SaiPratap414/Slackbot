@@ -108,9 +108,6 @@ def generate_project_description(user_input):
 
     return response
 
-
-
-
 def get_anime_waifu_image():
     try:
         api_url = "https://api.waifu.pics/sfw/waifu"  # API endpoint for fetching a random anime waifu image
