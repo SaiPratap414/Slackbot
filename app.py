@@ -12,7 +12,7 @@ from flask import Flask, request
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
-from functions import draft_email, generate_project_description, get_anime_waifu_image
+
 
 # Load environment variables from .env file
 load_dotenv()
