@@ -13,7 +13,7 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
 from langchain_openai import ChatOpenAI
-from langchain.chains import LLMChain
+
 from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
 # Load environment variables from .env file
