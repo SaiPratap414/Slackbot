@@ -192,58 +192,69 @@ def ask_chatgpt(question, model="gpt-3.5-turbo"):
         print(f"Error asking ChatGPT: {e}")
         return "Sorry, I couldn't process your request."
 
-
     
 @app.event("app_mention")
 def handle_mentions(body, say):
     try:
         text = body["event"]["text"]
-        # Normalize the text to lowercase for consistent comparison
-        lower_text = text.lower()
+        lower_text = text.lower()  # Normalize the text to lowercase for consistent comparison
+
+        # Greetings handler
+        greetings = ["hi", "hello", "hey"]
+        if any(greeting in lower_text for greeting in greetings):
+            bot_capabilities = """
+            Hello! I'm your helpful Slack bot. Here's what I can do:
+            - Respond to "gpt" commands with AI-generated text.
+            - Upload files to Google Drive when you attach them to a message.
+            - Generate project descriptions and draft emails based on your input.
+            - Fetch random anime waifu images.
+            Just mention me with one of the specific commands to get started!
+            """
+            say(bot_capabilities)
+            return
 
         # Handle "gpt" command
-        if "gpt" in lower_text:
-            query_start_index = text.lower().find("gpt") + 4  # Find start of query after "gpt"
+        elif "gpt" in lower_text:
+            query_start_index = lower_text.find("gpt") + 4  # Find start of query after "gpt"
             query = text[query_start_index:].strip()
             if query:  # Ensure there is a query after "gpt"
                 response = ask_chatgpt(query)
                 say(response)
                 return
-        # Check if the user uploaded a file
-        if "files" in body["event"]:
+
+        # File upload handling
+        elif "files" in body["event"]:
             file_url = body["event"]["files"][0]["url_private_download"]
             file_name = body["event"]["files"][0]["name"]
             headers = {"Authorization": f"Bearer {SLACK_BOT_TOKEN}"}
-
-            # Download the file
             response = requests.get(file_url, headers=headers)
             if response.status_code == 200:
                 file_content = response.content
-
-                # Upload to Google Drive
                 result = upload_to_drive(file_content, file_name, universal_folder_id)
-
-                # Respond in the channel
                 say(result)
             else:
                 say("Error downloading the file from Slack.")
+            return
+
+        # Handling other functionalities
+        elif "project description" in lower_text:
+            say("Sure, I'll get right on that!")
+            project_description = generate_project_description(text)
+            say(project_description)
+        elif "draft email" in lower_text:
+            say("Sure, I'll get right on that!")
+            response = draft_email(text)
+            say(response)
+        elif "anime waifu" in lower_text:
+            say("Sure, I'll get right on that!")
+            waifu_image_url = get_anime_waifu_image()
+            say(waifu_image_url)
         else:
-            if "project description" in text.lower():
-                say("Sure, I'll get right on that!")
-                project_description = generate_project_description(text)
-                say(project_description)
-            elif "draft email" in text.lower():
-                say("Sure, I'll get right on that!")
-                response = draft_email(text)
-                say(response)
-            elif "anime waifu" in text.lower():
-                say("Sure, I'll get right on that!")
-                waifu_image_url = get_anime_waifu_image()
-                say(waifu_image_url)
-            else:
-                say("Sorry, I couldn't understand that. How can I assist you?")
+            say("Sorry, I couldn't understand that. How can I assist you?")
     except Exception as e:
         print(f"Error handling mention: {e}")
+        say("Sorry, I couldn't process your request.")
+
 
 @flask_app.route("/slack/events", methods=["POST"])
 def slack_events():
