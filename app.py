@@ -172,9 +172,7 @@ def get_anime_waifu_image():
     except Exception as e:
         print(f"Error fetching anime waifu image: {e}")
         return "An error occurred while fetching the image."
-    
-import openai
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
 def ask_chatgpt(question, model="text-davinci-003"):
     try:
         response = openai.Completion.create(
@@ -195,10 +193,14 @@ def handle_mentions(body, say):
     try:
         text = body["event"]["text"].lower()  # Convert text to lowercase for consistent comparison
         user_id = body["event"]["user"]
-        if "gpt" in text:
-            query = text.split("gpt", 1)[1].strip()
-            response = ask_chatgpt(query)
-            say(response)
+        if "gpt" in lower_text:
+                # Extract the query directly from the original text to preserve case sensitivity of the query
+            query_start_index = lower_text.find("gpt") + 3  # Find the end of "gpt" command and get the rest as query
+            query = text[query_start_index:].strip()
+            if query:  # Ensure there is a query after "gpt"
+                response = ask_chatgpt(query)
+                say(response)
+                return 
         # Check if the user uploaded a file
         if "files" in body["event"]:
             file_url = body["event"]["files"][0]["url_private_download"]
