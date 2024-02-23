@@ -13,7 +13,7 @@ from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from oauth2client.service_account import ServiceAccountCredentials
 from langchain_openai import ChatOpenAI
-
+from langchain.chains import LLMChain
 from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
 # Load environment variables from .env file
@@ -55,9 +55,11 @@ def upload_to_drive(file_content, file_name, folder_id):
 
     drive_link = f"https://drive.google.com/file/d/{file_drive['id']}/view"
     return f"File uploaded successfully. Google Drive link: {drive_link}"
-
 def draft_email(user_input, name="pratap"):
+    signature = f"Best regards, {name}"  # Define signature here
     chat = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=1)
+    # The rest of your function...
+
 
     template = """
     You are a helpful assistant that drafts an email reply based on a new email.
