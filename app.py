@@ -204,7 +204,7 @@ def handle_mentions(body, say):
         if any(greeting in lower_text for greeting in greetings):
             bot_capabilities = """
             Hello! I'm your helpful Slack bot. Here's what I can do:
-            - Respond to "gpt" commands with AI-generated text.
+            - Respond to "answer me" commands with AI-generated text.
             - Upload files to Google Drive when you attach them to a message.
             - Generate project descriptions and draft emails based on your input.
             - Fetch random anime waifu images.
@@ -214,7 +214,7 @@ def handle_mentions(body, say):
             return
 
         # Handle "gpt" command
-        elif "gpt" in lower_text:
+        elif "answer me " in lower_text:
             query_start_index = lower_text.find("gpt") + 4  # Find start of query after "gpt"
             query = text[query_start_index:].strip()
             if query:  # Ensure there is a query after "gpt"
