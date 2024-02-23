@@ -2,6 +2,7 @@ import os
 import io
 import json
 import mimetypes
+import openai
 import requests
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -171,13 +172,33 @@ def get_anime_waifu_image():
     except Exception as e:
         print(f"Error fetching anime waifu image: {e}")
         return "An error occurred while fetching the image."
-
+    
+import openai
+openai.api_key = os.getenv("OPENAI_API_KEY")
+def ask_chatgpt(question, model="text-davinci-003"):
+    try:
+        response = openai.Completion.create(
+          engine=model,
+          prompt=question,
+          temperature=0.7,
+          max_tokens=150,
+          top_p=1.0,
+          frequency_penalty=0.0,
+          presence_penalty=0.0
+        )
+        return response.choices[0].text.strip()
+    except Exception as e:
+        print(f"Error asking ChatGPT: {e}")
+        return "Sorry, I couldn't process your request."
 @app.event("app_mention")
 def handle_mentions(body, say):
     try:
-        text = body["event"]["text"]
+        text = body["event"]["text"].lower()  # Convert text to lowercase for consistent comparison
         user_id = body["event"]["user"]
-        
+        if "gpt" in text:
+            query = text.split("gpt", 1)[1].strip()
+            response = ask_chatgpt(query)
+            say(response)
         # Check if the user uploaded a file
         if "files" in body["event"]:
             file_url = body["event"]["files"][0]["url_private_download"]
@@ -196,8 +217,6 @@ def handle_mentions(body, say):
                 say(result)
             else:
                 say("Error downloading the file from Slack.")
-
-
         else:
             if "project description" in text.lower():
                 say("Sure, I'll get right on that!")
