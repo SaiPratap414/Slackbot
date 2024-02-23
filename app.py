@@ -253,7 +253,7 @@ def handle_mentions(body, say):
             say("Sorry, I couldn't understand that. How can I assist you?")
     except Exception as e:
         print(f"Error handling mention: {e}")
-        say("Sorry, I couldn't process your request.")
+        
 
 
 @flask_app.route("/slack/events", methods=["POST"])
