@@ -173,21 +173,26 @@ def get_anime_waifu_image():
         print(f"Error fetching anime waifu image: {e}")
         return "An error occurred while fetching the image."
 
-def ask_chatgpt(question, model="text-davinci-003"):
+def ask_chatgpt(question, model="gpt-3.5-turbo"):
     try:
-        response = openai.Completion.create(
-            engine=model,
-            prompt=question,
-            temperature=0.7,
-            max_tokens=150,
-            top_p=1.0,
-            frequency_penalty=0.0,
-            presence_penalty=0.0
+        response = openai.ChatCompletion.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": question}
+            ]
         )
-        return response.choices[0].text.strip()
+        # Assuming the API returns a list of messages, with the last one being the model's response
+        if response.choices:
+            last_response = response.choices[0].message['content']
+            return last_response.strip()
+        else:
+            return "No response from the model."
     except Exception as e:
         print(f"Error asking ChatGPT: {e}")
         return "Sorry, I couldn't process your request."
+
+
     
 @app.event("app_mention")
 def handle_mentions(body, say):
